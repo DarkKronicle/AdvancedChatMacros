@@ -18,7 +18,13 @@ public class KonstructFilter implements IStringFilter {
     @Getter
     private NodeProcessor processor;
 
-    public KonstructFilter() {
+    private final static KonstructFilter INSTANCE = new KonstructFilter();
+
+    public static KonstructFilter getInstance() {
+        return INSTANCE;
+    }
+
+    private KonstructFilter() {
         MinecraftClient client = MinecraftClient.getInstance();
         processor = new NodeProcessor();
 
