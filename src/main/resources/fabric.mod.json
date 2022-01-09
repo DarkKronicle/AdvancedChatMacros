@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "acmoduletemplate",
+  "id": "advancedchatmacros",
   "version": "${version}",
-  "name": "AdvancedChatModuleTemplate",
-  "description": "A template for an AdvancedChat Module",
+  "name": "AdvancedChatMacros",
+  "description": "An AdvancedChatModule to modify sent text",
   "authors": [
     "DarkKronicle"
   ],
@@ -12,22 +12,22 @@
     "discord": "https://discord.gg/WnaE3uZxDA"
   },
   "license": "MPL-v2",
-  "icon": "assets/acmoduletemplate/icon.png",
+  "icon": "assets/advancedchatmacros/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
-      "io.github.darkkronicle.acmoduletemplate.ACModuleTemplate"
+      "io.github.darkkronicle.advancedchatmacros.AdvancedChatMacros"
     ]
   },
   "mixins": [
-    "acmoduletemplate.mixins.json"
+    "advancedchatmacros.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.8.9+build.204",
+    "fabricloader": ">=0.12.12",
     "fabric": "*",
-    "minecraft": ">=1.17.0",
+    "minecraft": ">=1.18",
     "malilib": ">=0.10.0-dev.20",
-    "advancedchatcore": ">=1.0.0"
+    "advancedchatcore": ">=1.3.0"
   },
   "custom": {
     "acmodule": true,
