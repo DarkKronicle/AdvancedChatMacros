@@ -4,7 +4,7 @@ import com.electronwill.nightconfig.core.Config;
 import io.github.darkkronicle.Konstruct.NodeProcessor;
 import io.github.darkkronicle.Konstruct.builder.NodeBuilder;
 import io.github.darkkronicle.Konstruct.nodes.Node;
-import io.github.darkkronicle.advancedchatmacros.KonstructFilter;
+import io.github.darkkronicle.advancedchatmacros.filter.KonstructFilter;
 import net.minecraft.client.MinecraftClient;
 
 public class CommandExecute implements IExecute {

@@ -35,6 +35,7 @@ dependencies {
 	include 'com.electronwill.night-config:toml:3.6.5'
 	include 'com.electronwill.night-config:core:3.6.5'
 	include "com.github.DarkKronicle:Konstruct:${project.konstruct_version}"
+//	include "com.github.DarkKronicle:Konstruct:${project.konstruct_version}"
 	include "org.mariuszgromada.math:MathParser.org-mXparser:${project.mathparser_version}"
 }
 processResources {

@@ -1,4 +1,4 @@
-package io.github.darkkronicle.advancedchatmacros;
+package io.github.darkkronicle.advancedchatmacros.filter;
 
 import io.github.darkkronicle.Konstruct.NodeException;
 import io.github.darkkronicle.Konstruct.NodeProcessor;
