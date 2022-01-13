@@ -4,9 +4,9 @@ import io.github.darkkronicle.Konstruct.NodeProcessor;
 import io.github.darkkronicle.Konstruct.builder.NodeBuilder;
 import io.github.darkkronicle.Konstruct.nodes.Node;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
+import io.github.darkkronicle.advancedchatcore.util.FindPair;
 import io.github.darkkronicle.advancedchatcore.util.SearchResult;
 import io.github.darkkronicle.advancedchatcore.util.StringMatch;
-import io.github.darkkronicle.advancedchatmacros.Match;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,10 @@ import java.util.Optional;
 
 public class MatchFilter implements IStringFilter {
 
-    private final List<Match> matches;
+    private final List<FindPair> matches;
     private final Node replaceTo;
 
-    public MatchFilter(List<Match> matches, String replaceTo) {
+    public MatchFilter(List<FindPair> matches, String replaceTo) {
         this.matches = matches;
         this.replaceTo = new NodeBuilder(replaceTo).build();
     }
@@ -25,8 +25,8 @@ public class MatchFilter implements IStringFilter {
     @Override
     public Optional<String> filter(String input) {
         List<StringMatch> stringMatches = new ArrayList<>();
-        for (Match match : matches) {
-            stringMatches.addAll(SearchResult.searchOf(input, match.getFindString(), match.getFindType()).getMatches());
+        for (FindPair match : matches) {
+            stringMatches.addAll(SearchResult.searchOf(input, match.getString(), match.getType()).getMatches());
         }
         if (stringMatches.size() == 0) {
             return Optional.empty();

@@ -4,9 +4,9 @@ import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import fi.dy.masa.malilib.util.FileUtils;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
+import io.github.darkkronicle.advancedchatcore.util.FindPair;
 import io.github.darkkronicle.advancedchatcore.util.FindType;
 import io.github.darkkronicle.advancedchatmacros.AdvancedChatMacros;
-import io.github.darkkronicle.advancedchatmacros.Match;
 import io.github.darkkronicle.advancedchatmacros.util.TomlUtils;
 
 import java.io.File;
@@ -48,10 +48,10 @@ public class MatchFilterHandler implements IStringFilter {
             // TODO flag
             return;
         }
-        List<Match> matches = new ArrayList<>();
+        List<FindPair> matches = new ArrayList<>();
         for (Config c : matchesConfigs.get()) {
             FindType type = FindType.fromFindType(c.get("type"));
-            matches.add(new Match(type, c.get("find")));
+            matches.add(new FindPair(type, c.get("find")));
         }
         filters.add(new MatchFilter(matches, config.get("replace")));
     }
