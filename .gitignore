@@ -1,4 +1,5 @@
 .idea/
+extra.properties
 *.iml
 *.ipr
 *.iws

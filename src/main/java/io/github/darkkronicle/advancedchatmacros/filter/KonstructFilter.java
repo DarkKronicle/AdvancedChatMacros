@@ -4,9 +4,8 @@ import io.github.darkkronicle.Konstruct.NodeException;
 import io.github.darkkronicle.Konstruct.NodeProcessor;
 import io.github.darkkronicle.Konstruct.builder.NodeBuilder;
 import io.github.darkkronicle.Konstruct.nodes.Node;
-import io.github.darkkronicle.addons.CalculatorFunction;
-import io.github.darkkronicle.addons.GetFunction;
-import io.github.darkkronicle.addons.RoundFunction;
+import io.github.darkkronicle.Konstruct.reader.Token;
+import io.github.darkkronicle.addons.*;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
@@ -18,6 +17,8 @@ public class KonstructFilter implements IStringFilter {
     @Getter
     private NodeProcessor processor;
 
+    private Token.TokenSettings settings = new Token.TokenSettings("[[", "]]", "(", ")", ",", "{{", "}}", "\\", "''", "'''");
+
     private final static KonstructFilter INSTANCE = new KonstructFilter();
 
     public static KonstructFilter getInstance() {
@@ -28,13 +29,13 @@ public class KonstructFilter implements IStringFilter {
         MinecraftClient client = MinecraftClient.getInstance();
         processor = new NodeProcessor();
 
-        GetFunction get = new GetFunction();
-        CalculatorFunction calc = new CalculatorFunction();
-        RoundFunction round = new RoundFunction();
-
-        processor.addFunction(get.getName(), get);
-        processor.addFunction(calc.getName(), calc);
-        processor.addFunction(round.getName(), round);
+        processor.addFunction(new CalculatorFunction());
+        processor.addFunction(new ReplaceFunction());
+        processor.addFunction(new RandomFunction());
+        processor.addFunction(new OwOFunction());
+        processor.addFunction(new GetFunction());
+        processor.addFunction(new RoundFunction());
+        processor.addFunction(new RomanNumeralFunction());
 
         processor.addVariable("x", () -> String.valueOf(client.player.getX()));
         processor.addVariable("y", () -> String.valueOf(client.player.getY()));
@@ -47,7 +48,7 @@ public class KonstructFilter implements IStringFilter {
     @Override
     public Optional<String> filter(String input) {
         try {
-            Node node = new NodeBuilder(input).build();
+            Node node = new NodeBuilder(input, settings).build();
             return Optional.of(node.parse(processor.createContext()));
         } catch (NodeException e) {
             return Optional.empty();
