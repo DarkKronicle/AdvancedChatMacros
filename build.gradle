@@ -34,7 +34,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "fi.dy.masa.malilib:malilib-fabric-1.18.0:${project.malilib_version}"
-	modImplementation "com.github.DarkKronicle:AdvancedChatCore:${project.advancedchat_version}"
+	modImplementation "com.github.DarkKronicle:AdvancedChatFilters:1.1.1-build2"
 
 	implementation 'com.electronwill.night-config:toml:3.6.5'
 	implementation "org.mariuszgromada.math:MathParser.org-mXparser:${project.mathparser_version}"

@@ -43,17 +43,7 @@ public class MatchFilterHandler implements IStringFilter {
     }
 
     private void loadFilter(Config config) {
-        Optional<List<Config>> matchesConfigs = config.getOptional("matches");
-        if (matchesConfigs.isEmpty()) {
-            // TODO flag
-            return;
-        }
-        List<FindPair> matches = new ArrayList<>();
-        for (Config c : matchesConfigs.get()) {
-            FindType type = FindType.fromFindType(c.get("type"));
-            matches.add(new FindPair(type, c.get("find")));
-        }
-        filters.add(new MatchFilter(matches, config.get("replace")));
+        filters.add(new MatchFilter(config.get("replace")));
     }
 
     @Override

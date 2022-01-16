@@ -14,36 +14,17 @@ import java.util.Optional;
 
 public class MatchFilter implements IStringFilter {
 
-    private final List<FindPair> matches;
     private final Node replaceTo;
 
-    public MatchFilter(List<FindPair> matches, String replaceTo) {
-        this.matches = matches;
+    public MatchFilter(String replaceTo) {
         this.replaceTo = new NodeBuilder(replaceTo).build();
     }
 
     @Override
     public Optional<String> filter(String input) {
-        List<StringMatch> stringMatches = new ArrayList<>();
-        for (FindPair match : matches) {
-            stringMatches.addAll(SearchResult.searchOf(input, match.getString(), match.getType()).getMatches());
-        }
-        if (stringMatches.size() == 0) {
-            return Optional.empty();
-        }
-        int lastIndex = 0;
-        StringBuilder builder = new StringBuilder();
-        for (StringMatch match : stringMatches) {
-            NodeProcessor processor = new NodeProcessor();
-            processor.addAll(KonstructFilter.getInstance().getProcessor());
-            processor.addVariable("0", match.match);
-            if (match.start - lastIndex > 0) {
-                builder.append(input, lastIndex, match.start);
-            }
-            builder.append(replaceTo.parse(processor.createContext()));
-            lastIndex = match.end;
-        }
-        return Optional.of(builder.append(input, lastIndex, input.length()).toString());
+        NodeProcessor processor = KonstructFilter.getInstance().getProcessor().copy();
+        processor.addVariable("input", input);
+        return Optional.of(replaceTo.parse(processor.createContext()));
     }
 
 }

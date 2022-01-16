@@ -7,6 +7,7 @@ import io.github.darkkronicle.Konstruct.nodes.Node;
 import io.github.darkkronicle.Konstruct.reader.Token;
 import io.github.darkkronicle.addons.*;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
+import io.github.darkkronicle.advancedchatmacros.config.MacrosConfigStorage;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 
@@ -47,6 +48,9 @@ public class KonstructFilter implements IStringFilter {
 
     @Override
     public Optional<String> filter(String input) {
+        if (!MacrosConfigStorage.General.KONSTRUCT_ENABLED.config.getBooleanValue()) {
+            return Optional.empty();
+        }
         try {
             Node node = new NodeBuilder(input, settings).build();
             return Optional.of(node.parse(processor.createContext()));
