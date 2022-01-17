@@ -14,7 +14,7 @@ public class FiltersImpl {
 
     public void init() {
         MatchProcessorRegistry processors = MatchProcessorRegistry.getInstance();
-        processors.register(MacroMatchProcessor::new, "macro", "advancedchatmacros.processor", "advancedchatmacros.info.processor");
+        processors.register(MacroMatchProcessor::new, "macro", "advancedchatmacros.matchprocessor", "advancedchatmacros.info.matchprocessor", false, false);
     }
 
 }

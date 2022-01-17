@@ -1,0 +1,12 @@
+{
+  "advancedchatmacros.config.general.konstructenabled": "Konstruct Chat Messages",
+  "advancedchatmacros.config.general.info.konstructenabled": "Chat messages would be processed through Konstruct.\nhttps://darkkronicle.github.io/Konstruct",
+  "advancedchatmacros.config.general.preventrecursion": "Prevent Filter Recursion",
+  "advancedchatmacros.config.general.info.preventrecursion": "If the raw sent message would trigger the result again,\nthe message is stopped from sending.",
+  "advancedchatmacros.matchprocessor": "Send Message",
+  "advancedchatmacros.info.matchprocessor": "Sends a chat message. Can have a delay and be a command",
+  "advancedchatmacros.matchprocessor.command": "Message",
+  "advancedchatmacros.matchprocessor.info.command": "What message would be sent in chat. {input} is the original message.\nThis is formatted using Konstruct.\nhttps://darkkronicle.github.io/Konstruct",
+  "advancedchatmacros.matchprocessor.delay": "Delay",
+  "advancedchatmacros.matchprocessor.info.delay": "Delay in ticks it takes the message to send."
+}

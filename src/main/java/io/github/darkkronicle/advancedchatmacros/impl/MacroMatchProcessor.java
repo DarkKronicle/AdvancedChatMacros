@@ -10,6 +10,8 @@ import io.github.darkkronicle.Konstruct.NodeProcessor;
 import io.github.darkkronicle.Konstruct.builder.NodeBuilder;
 import io.github.darkkronicle.Konstruct.nodes.Node;
 import io.github.darkkronicle.advancedchatcore.config.SaveableConfig;
+import io.github.darkkronicle.advancedchatcore.finder.PatternFinder;
+import io.github.darkkronicle.advancedchatcore.finder.RegexFinder;
 import io.github.darkkronicle.advancedchatcore.interfaces.IJsonApplier;
 import io.github.darkkronicle.advancedchatcore.interfaces.IMatchProcessor;
 import io.github.darkkronicle.advancedchatcore.interfaces.IScreenSupplier;
@@ -17,6 +19,7 @@ import io.github.darkkronicle.advancedchatcore.util.FluidText;
 import io.github.darkkronicle.advancedchatcore.util.SearchResult;
 import io.github.darkkronicle.advancedchatcore.util.SyncTaskQueue;
 import io.github.darkkronicle.advancedchatmacros.AdvancedChatMacros;
+import io.github.darkkronicle.advancedchatmacros.config.MacrosConfigStorage;
 import io.github.darkkronicle.advancedchatmacros.filter.KonstructFilter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -53,12 +56,16 @@ public class MacroMatchProcessor implements IMatchProcessor, IScreenSupplier, IJ
         reloadNode();
         NodeProcessor processor = KonstructFilter.getInstance().getProcessor().copy();
         processor.addVariable("input", text.getString());
+        String message = processor.parse(node);
+        if (MacrosConfigStorage.General.PREVENT_MACRO_RECURSION.config.getBooleanValue() && search.getFinder() != null && search.getFinder().isMatch(message, search.getSearch())) {
+            AdvancedChatMacros.LOGGER.log(Level.WARN, "Auto message stopped to prevent recursion!");
+        }
         if (delay.config.getIntegerValue() == 0) {
-            MinecraftClient.getInstance().player.sendChatMessage(processor.parse(node));
+            MinecraftClient.getInstance().player.sendChatMessage(message);
             return Result.getFromBool(true);
         }
         SyncTaskQueue.getInstance().add(delay.config.getIntegerValue(), () -> {
-            MinecraftClient.getInstance().player.sendChatMessage(processor.parse(node));
+            MinecraftClient.getInstance().player.sendChatMessage(message);
         });
         return Result.getFromBool(true);
     }

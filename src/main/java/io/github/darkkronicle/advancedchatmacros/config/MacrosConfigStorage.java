@@ -31,13 +31,16 @@ public class MacrosConfigStorage implements IConfigHandler {
         public static String NAME = "general";
 
         private static String translate(String key) {
-            return "advancedchatmacros.config." + key;
+            return "advancedchatmacros.config.general." + key;
         }
 
         public static SaveableConfig<BooleanTomlOption> KONSTRUCT_ENABLED = SaveableConfig.fromConfig("konstructEnabled",
                 new BooleanTomlOption(translate("konstructenabled"), true, translate("info.konstructenabled")));
 
-        public static ImmutableList<SaveableConfig<? extends TomlOption<?>>> OPTIONS = ImmutableList.of(KONSTRUCT_ENABLED);
+        public static SaveableConfig<BooleanTomlOption> PREVENT_MACRO_RECURSION = SaveableConfig.fromConfig("preventRecursion",
+                new BooleanTomlOption(translate("preventrecursion"), true, translate("info.preventrecursion")));
+
+        public static ImmutableList<SaveableConfig<? extends TomlOption<?>>> OPTIONS = ImmutableList.of(KONSTRUCT_ENABLED, PREVENT_MACRO_RECURSION);
     }
 
     public static void loadFromFile() {
