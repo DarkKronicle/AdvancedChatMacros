@@ -20,6 +20,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Formatting;
+import org.apache.logging.log4j.Level;
+
+import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public class MacrosInitHandler implements IInitializationHandler {
@@ -27,18 +30,20 @@ public class MacrosInitHandler implements IInitializationHandler {
     @Override
     public void registerModHandlers() {
         ConfigManager.getInstance().registerConfigHandler(AdvancedChatMacros.MOD_ID, new MacrosConfigStorage());
+        MessageSender.getInstance().addFilter(input -> {
+            if (input.equals("[[reloadMacros]]")) {
+                AdvancedChatMacros.reloadFilters(true);
+                return Optional.of("");
+            }
+            return Optional.empty();
+        });
         MessageSender.getInstance().addFilter(KonstructFilter.getInstance());
 
         try {
             CommandNode<ServerCommandSource> node = CommandsHandler.getInstance().getOrCreateSubs("macros");
-            node.addChild(CommandUtil.literal("reloadToml").executes(ClientCommand.of((context) -> {
-                InfoUtil.sendChatMessage("Reloading configuration...");
-                MatchFilterHandler.getInstance().load();
-                KeybindManager.getInstance().load();
-                InfoUtil.sendChatMessage("Done!", Formatting.GREEN);
-            })).build());
+            node.addChild(CommandUtil.literal("reloadToml").executes(ClientCommand.of((context) -> AdvancedChatMacros.reloadFilters(true))).build());
         } catch (Exception e) {
-
+            AdvancedChatMacros.LOGGER.log(Level.WARN, "Could not set up command!");
         }
 
         MatchFilterHandler.getInstance().load();
