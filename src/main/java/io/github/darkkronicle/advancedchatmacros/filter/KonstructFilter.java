@@ -5,8 +5,10 @@ import io.github.darkkronicle.Konstruct.NodeProcessor;
 import io.github.darkkronicle.Konstruct.builder.NodeBuilder;
 import io.github.darkkronicle.Konstruct.nodes.Node;
 import io.github.darkkronicle.Konstruct.reader.Token;
+import io.github.darkkronicle.Konstruct.reader.TokenSettings;
 import io.github.darkkronicle.addons.*;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
+import io.github.darkkronicle.advancedchatcore.util.AdvancedChatKonstruct;
 import io.github.darkkronicle.advancedchatmacros.config.MacrosConfigStorage;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
@@ -18,7 +20,12 @@ public class KonstructFilter implements IStringFilter {
     @Getter
     private NodeProcessor processor;
 
-    private Token.TokenSettings settings = new Token.TokenSettings("[[", "]]", "(", ")", ",", "{{", "}}", "\\", "''", "'''");
+    private TokenSettings settings = TokenSettings.builder()
+            .functionStart("[[")
+            .functionEnd("]]")
+            .variableStart("{{")
+            .variableEnd("}}")
+            .forceLiteral("''").build();
 
     private final static KonstructFilter INSTANCE = new KonstructFilter();
 
@@ -28,15 +35,7 @@ public class KonstructFilter implements IStringFilter {
 
     private KonstructFilter() {
         MinecraftClient client = MinecraftClient.getInstance();
-        processor = new NodeProcessor();
-
-        processor.addFunction(new CalculatorFunction());
-        processor.addFunction(new ReplaceFunction());
-        processor.addFunction(new RandomFunction());
-        processor.addFunction(new OwOFunction());
-        processor.addFunction(new GetFunction());
-        processor.addFunction(new RoundFunction());
-        processor.addFunction(new RomanNumeralFunction());
+        processor = AdvancedChatKonstruct.getInstance().copy();
 
         processor.addVariable("x", () -> String.valueOf(client.player.getX()));
         processor.addVariable("y", () -> String.valueOf(client.player.getY()));

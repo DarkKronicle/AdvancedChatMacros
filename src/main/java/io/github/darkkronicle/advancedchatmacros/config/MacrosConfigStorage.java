@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Level;
 @Environment(EnvType.CLIENT)
 public class MacrosConfigStorage implements IConfigHandler {
 
-    public static final String CONFIG_FILE_NAME = AdvancedChatMacros.MOD_ID + ".toml";
+    public static final String CONFIG_FILE_NAME = "config.toml";
     private static final int CONFIG_VERSION = 1;
 
     public static class General {
@@ -45,7 +45,7 @@ public class MacrosConfigStorage implements IConfigHandler {
 
     public static void loadFromFile() {
 
-        File configFile = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve(CONFIG_FILE_NAME).toFile();
+        File configFile = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve("macros").resolve(CONFIG_FILE_NAME).toFile();
 
         if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
             FileConfig config = TomlUtils.loadFile(configFile);
@@ -67,7 +67,7 @@ public class MacrosConfigStorage implements IConfigHandler {
     }
 
     public static void saveFromFile() {
-        File dir = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").toFile();
+        File dir = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve("macros").toFile();
 
         if ((dir.exists() && dir.isDirectory()) || dir.mkdirs()) {
             File file = dir.toPath().resolve(CONFIG_FILE_NAME).toFile();

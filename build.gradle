@@ -34,14 +34,16 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "fi.dy.masa.malilib:malilib-fabric-1.18.0:${project.malilib_version}"
-	modImplementation "com.github.DarkKronicle:AdvancedChatFilters:1.1.1-build2"
+	modImplementation "com.github.DarkKronicle:AdvancedChatCore:${project.advancedchat_version}"
+	// We use API here so it doesn't override AdvancedChatCore
+	modApi "com.github.DarkKronicle:AdvancedChatFilters:1.1.1-build2"
 
-	implementation 'com.electronwill.night-config:toml:3.6.5'
-	implementation "org.mariuszgromada.math:MathParser.org-mXparser:${project.mathparser_version}"
+//	implementation 'com.electronwill.night-config:toml:3.6.5'
+//	implementation "org.mariuszgromada.math:MathParser.org-mXparser:${project.mathparser_version}"
 
-	include 'com.electronwill.night-config:toml:3.6.5'
-	include 'com.electronwill.night-config:core:3.6.5'
-	include "org.mariuszgromada.math:MathParser.org-mXparser:${project.mathparser_version}"
+//	include 'com.electronwill.night-config:toml:3.6.5'
+//	include 'com.electronwill.night-config:core:3.6.5'
+//	include "org.mariuszgromada.math:MathParser.org-mXparser:${project.mathparser_version}"
 }
 processResources {
 	inputs.property "version", project.version
@@ -104,7 +106,9 @@ task discord {
 		}
 
 		File file = remapJar.archiveFile.get().asFile
-		String text = "<:Kronos:799707832399691867> **${project.archives_base_name} v${project.mod_version} for ${project.minecraft_version}**"
+		String commitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
+		String fileName = "$project.archives_base_name}-${project.mod_version}-${commitHash}"
+		String text = "<:Kronos:799707832399691867> **${project.archives_base_name} v${project.mod_version}-${commitHash} for ${project.minecraft_version}**"
 		URL url = new URL(webhook)
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection()
 
@@ -120,7 +124,7 @@ task discord {
 		DataOutputStream stream = new DataOutputStream(connection.getOutputStream());
 
 		stream.writeBytes("--" + boundary + "\r\n")
-		stream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + file.name + "\"\r\n\r\n")
+		stream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"\r\n\r\n")
 		stream.write(Files.readAllBytes(file.toPath()))
 		stream.writeBytes("\r\n")
 		stream.writeBytes("--" + boundary + "\r\n");

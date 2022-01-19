@@ -1,0 +1,12 @@
+# To get setup, rename this file to filters.toml
+
+# Only prepends &7 on a specific server
+[[filter]]
+replace = '''
+[currentServer = ('hypixel.net')];
+[if(
+    [isMatch({currentServer}, {server}, literal)],
+    &7{input}, [# Prepends what you want]
+    {input} [# Just send back original]
+)]
+'''
