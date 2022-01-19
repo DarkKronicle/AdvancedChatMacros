@@ -1,4 +1,4 @@
-# To get setup, rename this file to filters.toml
+# To get setup, rename this file to filters.knst
 # At any point if you do [[reloadMacros]] macros will reload, regardless of the filter. This will apply changes from this file.
 
 # ------------------------------------
