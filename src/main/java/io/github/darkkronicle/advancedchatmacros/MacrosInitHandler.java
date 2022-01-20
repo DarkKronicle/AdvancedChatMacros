@@ -35,6 +35,10 @@ public class MacrosInitHandler implements IInitializationHandler {
                 AdvancedChatMacros.reloadFilters(true);
                 return Optional.of("");
             }
+            if (input.equals("[[reloadKeybinds]]")) {
+                AdvancedChatMacros.reloadKeybinds(true);
+                return Optional.of("");
+            }
             return Optional.empty();
         });
         MessageSender.getInstance().addFilter(KonstructFilter.getInstance());

@@ -8,11 +8,28 @@ import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import fi.dy.masa.malilib.hotkeys.IKeyboardInputHandler;
 import fi.dy.masa.malilib.hotkeys.IMouseInputHandler;
 import fi.dy.masa.malilib.util.FileUtils;
+import io.github.darkkronicle.Konstruct.MultipleNodeProcessor;
+import io.github.darkkronicle.Konstruct.MultipleNodeSettings;
+import io.github.darkkronicle.Konstruct.NodeException;
+import io.github.darkkronicle.Konstruct.NodeProcessor;
+import io.github.darkkronicle.Konstruct.nodes.Node;
+import io.github.darkkronicle.Konstruct.reader.TokenSettings;
+import io.github.darkkronicle.addons.conditions.BooleanFunction;
+import io.github.darkkronicle.advancedchatcore.AdvancedChatCore;
 import io.github.darkkronicle.advancedchatmacros.AdvancedChatMacros;
 import io.github.darkkronicle.advancedchatmacros.CommandKeybind;
+import io.github.darkkronicle.advancedchatmacros.filter.KonstructFilter;
+import io.github.darkkronicle.advancedchatmacros.functions.CommandFunction;
+import io.github.darkkronicle.advancedchatmacros.functions.CopyFunction;
+import io.github.darkkronicle.advancedchatmacros.functions.InfoFunction;
+import io.github.darkkronicle.advancedchatmacros.functions.SuggestCommandFunction;
 import io.github.darkkronicle.advancedchatmacros.util.TomlUtils;
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +42,12 @@ public class KeybindManager implements IKeybindProvider, IKeyboardInputHandler, 
         return INSTANCE;
     }
 
+    public static boolean SETTING_UP = true;
+
     private List<CommandKeybind> keybinds = new ArrayList<>();
-    private File configDirectory = FileUtils.getConfigDirectory().toPath().resolve(AdvancedChatMacros.MOD_ID).toFile();
-    private File keyBindFile = FileUtils.getConfigDirectory().toPath().resolve(AdvancedChatMacros.MOD_ID).resolve("keybinds.toml").toFile();
+    private File configDirectory = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve(AdvancedChatMacros.MOD_ID).toFile();
+    private File keyBindFile = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve(AdvancedChatMacros.MOD_ID).resolve("keybinds.knst").toFile();
+    private File exampleKeybinds = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve(AdvancedChatMacros.MOD_ID).resolve("example_keybinds.knst").toFile();
 
     public void load() {
         keybinds.clear();
@@ -35,6 +55,14 @@ public class KeybindManager implements IKeybindProvider, IKeyboardInputHandler, 
 
         if (keyBindFile.exists()) {
             loadFile();
+        } else if (!exampleKeybinds.exists()) {
+            // Copy examples if filters and the example filters don't exist
+            try {
+                org.apache.commons.io.FileUtils.copyInputStreamToFile(AdvancedChatCore.getResource("example_keybinds.knst"), exampleKeybinds);
+                AdvancedChatMacros.LOGGER.log(Level.INFO, "example_keybinds.knst was successfully created!");
+            } catch (IOException | URISyntaxException e) {
+                AdvancedChatMacros.LOGGER.log(Level.WARN, "Example Keybinds failed to copy!", e);
+            }
         }
 
         // Clear the old ones and redo
@@ -42,21 +70,40 @@ public class KeybindManager implements IKeybindProvider, IKeyboardInputHandler, 
     }
 
     private void loadFile() {
-        FileConfig fileConfig = TomlUtils.loadFile(keyBindFile);
-        fileConfig.load();
-
-        Optional<List<Config>> keybindConfigs = fileConfig.getOptional("keybind");
-        if (keybindConfigs.isPresent()) {
-            for (Config config : keybindConfigs.get()) {
-                loadKeybind(config);
-            }
+        SETTING_UP = true;
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(keyBindFile.toPath());
+        } catch (IOException e) {
+            AdvancedChatMacros.LOGGER.log(Level.WARN, "Could not read keybinds.knst!", e);
+            return;
         }
-
-        fileConfig.clear();
+        String text = String.join("\n", lines);
+        NodeProcessor processor = KonstructFilter.getInstance().getProcessor().copy();
+        processor.addVariable("ready", () -> BooleanFunction.boolToString(!SETTING_UP));
+        processor.addFunction(new CommandFunction());
+        processor.addFunction(new CopyFunction());
+        processor.addFunction(new InfoFunction());
+        processor.addFunction(new SuggestCommandFunction());
+        MultipleNodeProcessor multiple;
+        try {
+            multiple = MultipleNodeProcessor.fromString(processor, MultipleNodeSettings.DEFAULT, TokenSettings.DEFAULT, text);
+        } catch (NodeException e) {
+            AdvancedChatMacros.LOGGER.log(Level.WARN, "Malformed Konstruct in keybinds.knst!", e);
+            SETTING_UP = false;
+            return;
+        }
+        for (Node node : multiple.getNodes()) {
+            loadKeybind(processor, node);
+        }
+        SETTING_UP = false;
     }
 
-    private void loadKeybind(Config config) {
-        keybinds.add(CommandKeybind.fromToml(config));
+    private void loadKeybind(NodeProcessor processor, Node config) {
+        CommandKeybind keybind = CommandKeybind.fromNode(processor, config);
+        if (keybind != null) {
+            keybinds.add(keybind);
+        }
     }
 
     @Override

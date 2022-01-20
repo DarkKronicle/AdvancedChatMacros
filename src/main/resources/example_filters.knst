@@ -17,7 +17,7 @@
 # {<variable>}
 # [# comment] - inline comment
 # ;'s will nullify any statement
-# ------------------------------------
+# ---------------------------
 
 # Start of filters:
 
@@ -31,13 +31,15 @@
 
 -----
 
+# Doesn't filter here on out if it is a command due to return
+[if([isMatch('^/', {input}, regex)], [return()], {input})]
+
+-----
+
 # OwO only on singleplayer
 [currentServer = ('singleplayer')];
-[if([isMatch('^/', {input}, regex)],
-    {input}, [# Do raw if a command]
-    [if([# Now we alter if it passes the condition
-       ][isMatch({currentServer}, {server}, literal)],
-        [owo({input})], [# Prepends what you want]
-        {input}5 [# Just send back original]
-    )]
+[if(
+    [isMatch({currentServer}, {server}, literal)],
+    [owo({input})], [# Prepends what you want]
+    {input}5 [# Just send back original]
 )]

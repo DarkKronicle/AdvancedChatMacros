@@ -2,6 +2,7 @@ package io.github.darkkronicle.advancedchatmacros.filter;
 
 import io.github.darkkronicle.Konstruct.NodeException;
 import io.github.darkkronicle.Konstruct.NodeProcessor;
+import io.github.darkkronicle.Konstruct.ParseResult;
 import io.github.darkkronicle.Konstruct.builder.NodeBuilder;
 import io.github.darkkronicle.Konstruct.nodes.Node;
 import io.github.darkkronicle.Konstruct.reader.Token;
@@ -25,7 +26,9 @@ public class KonstructFilter implements IStringFilter {
             .functionEnd("]]")
             .variableStart("{{")
             .variableEnd("}}")
-            .forceLiteral("''").build();
+            .forceLiteral("''")
+            .endLine(";;")
+            .build();
 
     private final static KonstructFilter INSTANCE = new KonstructFilter();
 
@@ -52,7 +55,8 @@ public class KonstructFilter implements IStringFilter {
         }
         try {
             Node node = new NodeBuilder(input, settings).build();
-            return Optional.of(node.parse(processor.createContext()));
+            ParseResult result = processor.parse(node);
+            return Optional.of(result.getResult().getContent());
         } catch (NodeException e) {
             return Optional.empty();
         }

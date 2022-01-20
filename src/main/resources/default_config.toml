@@ -1,0 +1,5 @@
+[general]
+    # Will Konstruct be enabled within chat
+    konstructEnabled = false
+    # On Filters, will recursion tried to be stopped. (Not perfect, but good for dingus's [I am also a dingus, don't worry {this has saved my life}])
+    preventRecursion = false

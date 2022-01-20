@@ -3,6 +3,11 @@ package io.github.darkkronicle.advancedchatmacros.filter;
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import fi.dy.masa.malilib.util.FileUtils;
+import io.github.darkkronicle.Konstruct.MultipleNodeProcessor;
+import io.github.darkkronicle.Konstruct.MultipleNodeSettings;
+import io.github.darkkronicle.Konstruct.NodeException;
+import io.github.darkkronicle.Konstruct.Result;
+import io.github.darkkronicle.Konstruct.reader.TokenSettings;
 import io.github.darkkronicle.advancedchatcore.AdvancedChatCore;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
 import io.github.darkkronicle.advancedchatmacros.AdvancedChatMacros;
@@ -22,7 +27,7 @@ public class MatchFilterHandler implements IStringFilter {
 
     private final static MatchFilterHandler INSTANCE = new MatchFilterHandler();
 
-    private List<MatchFilter> filters = new ArrayList<>();
+    private MultipleNodeProcessor processor = null;
     private File filtersFile = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve(AdvancedChatMacros.MOD_ID).resolve("filters.knst").toFile();
 
     public static MatchFilterHandler getInstance() {
@@ -32,7 +37,7 @@ public class MatchFilterHandler implements IStringFilter {
     private MatchFilterHandler() {}
 
     public void load() {
-        filters.clear();
+        processor = null;
         File exampleFile = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve(AdvancedChatMacros.MOD_ID).resolve("example_filters.knst").toFile();
         if (!filtersFile.exists() && !exampleFile.exists()) {
             // Copy examples if filters and the example filters don't exist
@@ -60,45 +65,30 @@ public class MatchFilterHandler implements IStringFilter {
         }
         StringBuilder raw = new StringBuilder();
         for (String line : lines) {
-            // We don't want newlines since this is all within chat box
-            if (!line.startsWith("#") && line.trim().length() > 0) {
-                // Not a comment
-                raw.append(line).append(' ');
-            }
+            raw.append(line).append('\n');
         }
         if (raw.length() == 0) {
             return;
         }
-        // Grab everything but the last space
+        // Grab everything but the last new line
         String text = raw.substring(0, raw.length() - 1);
         // 5 or more dashes
-        String[] filters = text.split("-{5,}");
-        for (String filter : filters) {
-            loadFilter(filter);
+        try {
+            processor = MultipleNodeProcessor.fromString(KonstructFilter.getInstance().getProcessor(), MultipleNodeSettings.DEFAULT, TokenSettings.DEFAULT, text);
+        } catch (NodeException e) {
+            AdvancedChatMacros.LOGGER.log(Level.WARN, "Malformed Konstruct in filters.knst!", e);
         }
-    }
-
-    private void loadFilter(String filter) {
-        filter = filter.strip();
-        if (filter.length() == 0) {
-            // Blank
-            return;
-        }
-        filters.add(new MatchFilter(filter));
     }
 
     @Override
     public Optional<String> filter(String input) {
-        String unfiltered = input;
-        for (MatchFilter filter : filters) {
-            Optional<String> changed = filter.filter(input);
-            if (changed.isPresent()) {
-                input = changed.get();
-            }
-        }
-        if (input.equals(unfiltered)) {
+        if (processor == null) {
             return Optional.empty();
         }
-        return Optional.of(input);
+        Optional<Result> result = processor.parse(input);
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(result.get().getContent());
     }
 }

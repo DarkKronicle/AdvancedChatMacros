@@ -1,5 +1,6 @@
 {
   "advancedchatmacros.config.general.konstructenabled": "Konstruct Chat Messages",
+  "advancedchatmacros.screen.processor": "Send Message Processor",
   "advancedchatmacros.config.general.info.konstructenabled": "Chat messages would be processed through Konstruct.\nhttps://darkkronicle.github.io/Konstruct",
   "advancedchatmacros.config.general.preventrecursion": "Prevent Filter Recursion",
   "advancedchatmacros.config.general.info.preventrecursion": "If the raw sent message would trigger the result again,\nthe message is stopped from sending.",

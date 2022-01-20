@@ -56,16 +56,20 @@ public class MacroMatchProcessor implements IMatchProcessor, IScreenSupplier, IJ
         reloadNode();
         NodeProcessor processor = KonstructFilter.getInstance().getProcessor().copy();
         processor.addVariable("input", text.getString());
-        String message = processor.parse(node);
+        String message = processor.parse(node).getResult().getContent();
         if (MacrosConfigStorage.General.PREVENT_MACRO_RECURSION.config.getBooleanValue() && search.getFinder() != null && search.getFinder().isMatch(message, search.getSearch())) {
             AdvancedChatMacros.LOGGER.log(Level.WARN, "Auto message stopped to prevent recursion!");
+            // We say it was a success so nothing bad happens
+            return Result.getFromBool(true);
         }
         if (delay.config.getIntegerValue() == 0) {
             MinecraftClient.getInstance().player.sendChatMessage(message);
             return Result.getFromBool(true);
         }
         SyncTaskQueue.getInstance().add(delay.config.getIntegerValue(), () -> {
-            MinecraftClient.getInstance().player.sendChatMessage(message);
+            if (MinecraftClient.getInstance().player != null) {
+                MinecraftClient.getInstance().player.sendChatMessage(message);
+            }
         });
         return Result.getFromBool(true);
     }
@@ -101,7 +105,7 @@ public class MacroMatchProcessor implements IMatchProcessor, IScreenSupplier, IJ
             command.config.setValueFromJsonElement(obj.get("command"));
         }
         if (obj.has("delay")) {
-            command.config.setValueFromJsonElement(obj.get("delay"));
+            delay.config.setValueFromJsonElement(obj.get("delay"));
         }
         reloadNode();
     }

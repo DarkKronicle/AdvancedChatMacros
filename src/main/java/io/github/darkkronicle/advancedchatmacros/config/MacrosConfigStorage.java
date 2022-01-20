@@ -5,11 +5,14 @@ import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.util.FileUtils;
+import io.github.darkkronicle.advancedchatcore.AdvancedChatCore;
 import io.github.darkkronicle.advancedchatcore.config.ConfigStorage;
 import io.github.darkkronicle.advancedchatcore.config.SaveableConfig;
 import io.github.darkkronicle.advancedchatmacros.AdvancedChatMacros;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -45,9 +48,17 @@ public class MacrosConfigStorage implements IConfigHandler {
 
     public static void loadFromFile() {
 
-        File configFile = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve("macros").resolve(CONFIG_FILE_NAME).toFile();
-
-        if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
+        File configFile = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve(AdvancedChatMacros.MOD_ID).resolve(CONFIG_FILE_NAME).toFile();
+        if (!configFile.exists()) {
+            try {
+                org.apache.commons.io.FileUtils.copyInputStreamToFile(AdvancedChatCore.getResource("default_config.toml"), configFile);
+                AdvancedChatMacros.LOGGER.log(Level.INFO, "default_config.toml was successfully created!");
+            } catch (IOException | URISyntaxException e) {
+                AdvancedChatMacros.LOGGER.log(Level.WARN, "Default configuration failed to copy! No comments will be present in the file.", e);
+            }
+            return;
+        }
+        if (configFile.isFile() && configFile.canRead()) {
             FileConfig config = TomlUtils.loadFile(configFile);
             config.load();
             Optional<Config> general = config.getOptional(ConfigStorage.General.NAME);
@@ -67,7 +78,7 @@ public class MacrosConfigStorage implements IConfigHandler {
     }
 
     public static void saveFromFile() {
-        File dir = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve("macros").toFile();
+        File dir = FileUtils.getConfigDirectory().toPath().resolve("advancedchat").resolve(AdvancedChatMacros.MOD_ID).toFile();
 
         if ((dir.exists() && dir.isDirectory()) || dir.mkdirs()) {
             File file = dir.toPath().resolve(CONFIG_FILE_NAME).toFile();

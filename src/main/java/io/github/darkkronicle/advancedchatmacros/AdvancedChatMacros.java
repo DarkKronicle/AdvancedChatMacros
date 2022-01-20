@@ -35,8 +35,22 @@ public class AdvancedChatMacros implements ClientModInitializer {
             InfoUtil.sendChatMessage("Reloading macro filters...");
         }
         MatchFilterHandler.getInstance().load();
-        KeybindManager.getInstance().load();
         LOGGER.log(Level.INFO, "Filters loaded");
+        if (sendMessage) {
+            InfoUtil.sendChatMessage("Done!", Formatting.GREEN);
+        }
+    }
+
+    public static void reloadKeybinds() {
+        reloadFilters(MinecraftClient.getInstance().player != null);
+    }
+
+    public static void reloadKeybinds(boolean sendMessage) {
+        if (sendMessage) {
+            InfoUtil.sendChatMessage("Reloading keybinds...");
+        }
+        KeybindManager.getInstance().load();
+        LOGGER.log(Level.INFO, "Keybinds loaded");
         if (sendMessage) {
             InfoUtil.sendChatMessage("Done!", Formatting.GREEN);
         }

@@ -37,14 +37,8 @@ dependencies {
 	modImplementation "com.github.DarkKronicle:AdvancedChatCore:${project.advancedchat_version}"
 	// We use API here so it doesn't override AdvancedChatCore
 	modApi "com.github.DarkKronicle:AdvancedChatFilters:1.1.1-build2"
-
-//	implementation 'com.electronwill.night-config:toml:3.6.5'
-//	implementation "org.mariuszgromada.math:MathParser.org-mXparser:${project.mathparser_version}"
-
-//	include 'com.electronwill.night-config:toml:3.6.5'
-//	include 'com.electronwill.night-config:core:3.6.5'
-//	include "org.mariuszgromada.math:MathParser.org-mXparser:${project.mathparser_version}"
 }
+
 processResources {
 	inputs.property "version", project.version
 
