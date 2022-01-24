@@ -7,63 +7,62 @@
 
 # You have to specify one variable, keys that will trigger this. Keys can be separated by ,'s and should be upper case.
 
-# Comments can be written inline using [# comment] or at the start of the line like this section.
+# Comments can be written inline using # comment or at the start of the line like this section.
 
 # ----- Quick reference -----
-# [replace(pattern, {input}, replaceTo, [replaceType])]
-# [isMatch(pattern, {input}, [replaceType])]
-# [<variable> = <value>]
-# {<variable>}
-# [# comment] - inline comment
+# replace(pattern, {input}, replaceTo, [replaceType])
+# isMatch(pattern, {input}, [replaceType])
+# <variable> = <value>
+# <variable>
+# # comment - line comment
+# #| comment |#
 # ;'s will nullify any statement
 # ---- Custom Functions -----
-# [sendCommand(command)] - Executes a command/chat message
-# [copy(contents)] - Copies something to clipboard
-# [suggestCommand(command)] - Opens chat with 'command' as the current message
-# [sendInfo(message)] - Sends a message directly to chat
-# {ready} - If it's ready to execute. This will be false if keybinds are being reloaded.
+# sendCommand(command) - Executes a command/chat message
+# copy(contents) - Copies something to clipboard
+# suggestCommand(command) - Opens chat with 'command' as the current message
+# sendInfo(message) - Sends a message directly to chat
+# ready - If it's ready to execute. This will be false if keybinds are being reloaded.
 # ----- Keybind Settings -----
 # keys - Keys to activate separated by commas. Values can be anything from: https://github.com/DarkKronicle/AdvancedChatMacros/wiki/Keybind-Keys
-# ------ Boolean values (0 or 1)
+# ------ Boolean values ( or false)
 # https://github.com/maruohon/malilib/blob/fabric_1.18.x/src/main/resources/assets/malilib/lang/en_us.json#L2-L8
-# cancel - When activated should it cancel the action. Default 1
-# orderSensitive - Does the order of the key presses matter. Default 1
+# cancel - When activated should it cancel the action. Default true
+# orderSensitive - Does the order of the key presses matter. Default true
 # exclusive - If true, then no other keybinds can have
 #             been activated before the keybind in question.
-#             This check resets when all keys are released. Default 0
-# allowExtra - Allows extra keys. Default 1
+#             This check resets when all keys are released. Default false
+# allowExtra - Allows extra keys. Default true
 
-[orderSensitive = (0)];
-[allowExtra = (1)];
-[keys = ('I,K')];
-[executeCommand(/gamemode creative)];
-
------
-
-[orderSensitive = (0)];
-[allowExtra = (1)];
-[keys = ('I,U')];
-[executeCommand(/gamemode survival)];
+orderSensitive = false;
+allowExtra = true;
+keys = 'I,K';
+executeCommand('/gamemode creative');
 
 -----
 
-[orderSensitive = (0)];
-[allowExtra = (1)];
-[keys = ('I,O')];
-[executeCommand(/gamemode spectator)];
+orderSensitive = false;
+allowExtra = true;
+keys = 'I,U';
+executeCommand('/gamemode survival');
 
 -----
 
-[keys = (M)];
+orderSensitive = false;
+allowExtra = true;
+keys = 'I,O';
+executeCommand('/gamemode spectator');
+
+-----
+
+keys = 'M';
 # Example of something not triggering until everything is ready. This helps prevent some edge cases.
-[if({ready},
-
-[suggestCommand(/message )]
-
-)]
+if(ready) {
+    suggestCommand('/message ')
+}
 
 -----
 
-[allowExtra = 0];
-[keys = (Y)];
-[copy([time(hh:mm:ss)])];
+allowExtra = false;
+keys = 'Y';
+copy(time('hh:mm:ss'));
