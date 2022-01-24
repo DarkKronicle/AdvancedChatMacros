@@ -1,17 +1,13 @@
 package io.github.darkkronicle.advancedchatmacros.filter;
 
-import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.file.FileConfig;
 import fi.dy.masa.malilib.util.FileUtils;
-import io.github.darkkronicle.Konstruct.MultipleNodeProcessor;
-import io.github.darkkronicle.Konstruct.MultipleNodeSettings;
 import io.github.darkkronicle.Konstruct.NodeException;
-import io.github.darkkronicle.Konstruct.Result;
-import io.github.darkkronicle.Konstruct.reader.TokenSettings;
+import io.github.darkkronicle.Konstruct.parser.MultipleNodeProcessor;
+import io.github.darkkronicle.Konstruct.parser.MultipleNodeSettings;
+import io.github.darkkronicle.Konstruct.parser.Result;
 import io.github.darkkronicle.advancedchatcore.AdvancedChatCore;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
 import io.github.darkkronicle.advancedchatmacros.AdvancedChatMacros;
-import io.github.darkkronicle.advancedchatmacros.util.TomlUtils;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -19,7 +15,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +69,7 @@ public class MatchFilterHandler implements IStringFilter {
         String text = raw.substring(0, raw.length() - 1);
         // 5 or more dashes
         try {
-            processor = MultipleNodeProcessor.fromString(KonstructFilter.getInstance().getProcessor(), MultipleNodeSettings.DEFAULT, TokenSettings.DEFAULT, text);
+            processor = MultipleNodeProcessor.fromString(KonstructFilter.getInstance().getProcessor(), MultipleNodeSettings.DEFAULT, text);
         } catch (NodeException e) {
             AdvancedChatMacros.LOGGER.log(Level.WARN, "Malformed Konstruct in filters.knst!", e);
         }
@@ -89,6 +84,6 @@ public class MatchFilterHandler implements IStringFilter {
         if (result.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(result.get().getContent());
+        return Optional.of(result.get().getContent().getString());
     }
 }

@@ -6,12 +6,10 @@ import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import io.github.darkkronicle.Konstruct.NodeException;
-import io.github.darkkronicle.Konstruct.NodeProcessor;
-import io.github.darkkronicle.Konstruct.builder.NodeBuilder;
 import io.github.darkkronicle.Konstruct.nodes.Node;
+import io.github.darkkronicle.Konstruct.parser.NodeProcessor;
+import io.github.darkkronicle.Konstruct.reader.builder.NodeBuilder;
 import io.github.darkkronicle.advancedchatcore.config.SaveableConfig;
-import io.github.darkkronicle.advancedchatcore.finder.PatternFinder;
-import io.github.darkkronicle.advancedchatcore.finder.RegexFinder;
 import io.github.darkkronicle.advancedchatcore.interfaces.IJsonApplier;
 import io.github.darkkronicle.advancedchatcore.interfaces.IMatchProcessor;
 import io.github.darkkronicle.advancedchatcore.interfaces.IScreenSupplier;
@@ -56,7 +54,7 @@ public class MacroMatchProcessor implements IMatchProcessor, IScreenSupplier, IJ
         reloadNode();
         NodeProcessor processor = KonstructFilter.getInstance().getProcessor().copy();
         processor.addVariable("input", text.getString());
-        String message = processor.parse(node).getResult().getContent();
+        String message = processor.parse(node).getResult().getContent().getString();
         if (MacrosConfigStorage.General.PREVENT_MACRO_RECURSION.config.getBooleanValue() && search.getFinder() != null && search.getFinder().isMatch(message, search.getSearch())) {
             AdvancedChatMacros.LOGGER.log(Level.WARN, "Auto message stopped to prevent recursion!");
             // We say it was a success so nothing bad happens

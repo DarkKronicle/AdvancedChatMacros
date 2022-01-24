@@ -1,13 +1,14 @@
 package io.github.darkkronicle.advancedchatmacros.filter;
 
 import io.github.darkkronicle.Konstruct.NodeException;
-import io.github.darkkronicle.Konstruct.NodeProcessor;
-import io.github.darkkronicle.Konstruct.ParseResult;
-import io.github.darkkronicle.Konstruct.builder.NodeBuilder;
+import io.github.darkkronicle.Konstruct.functions.Variable;
 import io.github.darkkronicle.Konstruct.nodes.Node;
-import io.github.darkkronicle.Konstruct.reader.Token;
-import io.github.darkkronicle.Konstruct.reader.TokenSettings;
-import io.github.darkkronicle.addons.*;
+import io.github.darkkronicle.Konstruct.parser.NodeProcessor;
+import io.github.darkkronicle.Konstruct.parser.ParseResult;
+import io.github.darkkronicle.Konstruct.reader.builder.InputNodeBuilder;
+import io.github.darkkronicle.Konstruct.type.DoubleObject;
+import io.github.darkkronicle.Konstruct.type.IntegerObject;
+import io.github.darkkronicle.Konstruct.type.StringObject;
 import io.github.darkkronicle.advancedchatcore.interfaces.IStringFilter;
 import io.github.darkkronicle.advancedchatcore.util.AdvancedChatKonstruct;
 import io.github.darkkronicle.advancedchatmacros.config.MacrosConfigStorage;
@@ -15,20 +16,12 @@ import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class KonstructFilter implements IStringFilter {
 
     @Getter
     private NodeProcessor processor;
-
-    private TokenSettings settings = TokenSettings.builder()
-            .functionStart("[[")
-            .functionEnd("]]")
-            .variableStart("{{")
-            .variableEnd("}}")
-            .forceLiteral("''")
-            .endLine(";;")
-            .build();
 
     private final static KonstructFilter INSTANCE = new KonstructFilter();
 
@@ -40,12 +33,20 @@ public class KonstructFilter implements IStringFilter {
         MinecraftClient client = MinecraftClient.getInstance();
         processor = AdvancedChatKonstruct.getInstance().copy();
 
-        processor.addVariable("x", () -> String.valueOf(client.player.getX()));
-        processor.addVariable("y", () -> String.valueOf(client.player.getY()));
-        processor.addVariable("z", () -> String.valueOf(client.player.getZ()));
-        processor.addVariable("blockX", () -> String.valueOf(client.player.getBlockX()));
-        processor.addVariable("blockY", () -> String.valueOf(client.player.getBlockY()));
-        processor.addVariable("blockZ", () -> String.valueOf(client.player.getBlockZ()));
+        addDoubleProperty(processor, "x", () -> client.player.getX());
+        addDoubleProperty(processor, "y", () -> client.player.getY());
+        addDoubleProperty(processor, "z", () -> client.player.getZ());
+        addIntProperty(processor, "blockX", () -> client.player.getBlockX());
+        addIntProperty(processor, "blockY", () -> client.player.getBlockY());
+        addIntProperty(processor, "blockZ", () -> client.player.getBlockZ());
+    }
+
+    private void addIntProperty(NodeProcessor processor, String name, Supplier<Integer> variable) {
+        processor.addVariable(name, Variable.of(() -> new IntegerObject(variable.get())));
+    }
+
+    private void addDoubleProperty(NodeProcessor processor, String name, Supplier<Double> variable) {
+        processor.addVariable(name, Variable.of(() -> new DoubleObject(variable.get())));
     }
 
     @Override
@@ -54,9 +55,9 @@ public class KonstructFilter implements IStringFilter {
             return Optional.empty();
         }
         try {
-            Node node = new NodeBuilder(input, settings).build();
+            Node node = new InputNodeBuilder(input).build();
             ParseResult result = processor.parse(node);
-            return Optional.of(result.getResult().getContent());
+            return Optional.of(result.getResult().getContent().getString());
         } catch (NodeException e) {
             return Optional.empty();
         }

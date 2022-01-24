@@ -5,11 +5,12 @@ import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
-import io.github.darkkronicle.Konstruct.NodeProcessor;
-import io.github.darkkronicle.Konstruct.ParseResult;
 import io.github.darkkronicle.Konstruct.functions.Variable;
 import io.github.darkkronicle.Konstruct.nodes.Node;
-import io.github.darkkronicle.addons.conditions.BooleanFunction;
+import io.github.darkkronicle.Konstruct.parser.NodeProcessor;
+import io.github.darkkronicle.Konstruct.parser.ParseContext;
+import io.github.darkkronicle.Konstruct.parser.ParseResult;
+import io.github.darkkronicle.Konstruct.type.KonstructObject;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,14 +47,19 @@ public class CommandKeybind implements IHotkeyCallback {
             // No key so no bind
             return null;
         }
-        boolean cancel = BooleanFunction.stringToBool(result.getContext().getLocalVariable("cancel").map(Variable::getValue).orElse("1"));
-        boolean exclusive = BooleanFunction.stringToBool(result.getContext().getLocalVariable("exclusive").map(Variable::getValue).orElse("0"));
-        boolean allowExtra = BooleanFunction.stringToBool(result.getContext().getLocalVariable("allowExtra").map(Variable::getValue).orElse("0"));
-        boolean orderSensitive = BooleanFunction.stringToBool(result.getContext().getLocalVariable("orderSensitive").map(Variable::getValue).orElse("1"));
+        ParseContext context = result.getContext();
+        boolean cancel = getValue(context, "cancel", true);
+        boolean exclusive = getValue(context, "exclusive", false);
+        boolean allowExtra = getValue(context, "allowExtra", false);
+        boolean orderSensitive = getValue(context, "orderSensitive", true);
         KeybindSettings settings = KeybindSettings.create(KeybindSettings.Context.INGAME, KeyAction.PRESS, allowExtra, orderSensitive, exclusive, cancel);
-        IKeybind keybind = KeybindMulti.fromStorageString(keys.get().getValue().toUpperCase(), settings);
+        IKeybind keybind = KeybindMulti.fromStorageString(keys.get().getValue().getString().toUpperCase(), settings);
         CommandKeybind command = new CommandKeybind(keybind, node, processor);
         command.getKeybind().setCallback(command);
         return command;
+    }
+
+    private static boolean getValue(ParseContext context, String key, boolean defaultValue) {
+        return context.getLocalVariable("cancel").map(Variable::getValue).map(KonstructObject::getBoolean).orElse(true);
     }
 }

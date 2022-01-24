@@ -11,35 +11,39 @@
 # Whatever the output of the Konstruct expression is on the last line of the filter will be what input is.
 
 # ----- Quick reference -----
-# [replace(pattern, {input}, replaceTo, [replaceType])]
-# [isMatch(pattern, {input}, [replaceType])]
-# [<variable> = <value>]
-# {<variable>}
-# [# comment] - inline comment
+# replace(pattern, {input}, replaceTo, [replaceType])
+# isMatch(pattern, {input}, [replaceType])
+# <variable> = <value>
+# <variable>
+# # comment - inline comment
 # ;'s will nullify any statement
 # ---------------------------
 
 # Start of filters:
 
 # Replaces smiley face
-[replace('''(?<=\s|^):\)(?=\s|$|\))''', {input}, ☺, regex)]
+replace('''(?<=\s|^):\)(?=\s|$|\))''', input, '☺', 'regex')
 
 -----
 
 # Replaces heart
-[replace('''(?<=\s|^)<3(?=\s|$|\))''', {input}, ❤, regex)]
+replace('''(?<=\s|^)<3(?=\s|$|\))''', input, '❤', 'regex')
 
 -----
 
 # Doesn't filter here on out if it is a command due to return
-[if([isMatch('^/', {input}, regex)], [return()], {input})]
+if (isMatch('^/', input, regex)) {
+    exit()
+} else {
+    input
+}
 
 -----
 
 # OwO only on singleplayer
-[currentServer = ('singleplayer')];
-[if(
-    [isMatch({currentServer}, {server}, literal)],
-    [owo({input})], [# Prepends what you want]
-    {input}5 [# Just send back original]
-)]
+currentServer = 'singleplayer';
+if (isMatch(currentServer, server, literal)) {
+    owo(input) # Prepends what you want
+} else {
+    input
+}

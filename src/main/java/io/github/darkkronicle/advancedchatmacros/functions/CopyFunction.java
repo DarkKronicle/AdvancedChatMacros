@@ -1,11 +1,11 @@
 package io.github.darkkronicle.advancedchatmacros.functions;
 
-import io.github.darkkronicle.Konstruct.IntRange;
-import io.github.darkkronicle.Konstruct.ParseContext;
-import io.github.darkkronicle.Konstruct.Result;
 import io.github.darkkronicle.Konstruct.functions.Function;
 import io.github.darkkronicle.Konstruct.functions.NamedFunction;
 import io.github.darkkronicle.Konstruct.nodes.Node;
+import io.github.darkkronicle.Konstruct.parser.IntRange;
+import io.github.darkkronicle.Konstruct.parser.ParseContext;
+import io.github.darkkronicle.Konstruct.parser.Result;
 import io.github.darkkronicle.advancedchatmacros.config.KeybindManager;
 import net.minecraft.client.MinecraftClient;
 
@@ -23,7 +23,7 @@ public class CopyFunction implements NamedFunction {
         Result res = Function.parseArgument(context, input, 0);
         if (Function.shouldReturn(res)) return res;
         if (!KeybindManager.SETTING_UP) {
-            MinecraftClient.getInstance().keyboard.setClipboard(res.getContent());
+            MinecraftClient.getInstance().keyboard.setClipboard(res.getContent().getString());
         }
         return Result.success("");
     }

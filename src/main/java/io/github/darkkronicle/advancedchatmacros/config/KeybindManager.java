@@ -1,20 +1,17 @@
 package io.github.darkkronicle.advancedchatmacros.config;
 
-import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.file.FileConfig;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.hotkeys.IKeybindManager;
 import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import fi.dy.masa.malilib.hotkeys.IKeyboardInputHandler;
 import fi.dy.masa.malilib.hotkeys.IMouseInputHandler;
 import fi.dy.masa.malilib.util.FileUtils;
-import io.github.darkkronicle.Konstruct.MultipleNodeProcessor;
-import io.github.darkkronicle.Konstruct.MultipleNodeSettings;
 import io.github.darkkronicle.Konstruct.NodeException;
-import io.github.darkkronicle.Konstruct.NodeProcessor;
 import io.github.darkkronicle.Konstruct.nodes.Node;
-import io.github.darkkronicle.Konstruct.reader.TokenSettings;
-import io.github.darkkronicle.addons.conditions.BooleanFunction;
+import io.github.darkkronicle.Konstruct.parser.MultipleNodeProcessor;
+import io.github.darkkronicle.Konstruct.parser.MultipleNodeSettings;
+import io.github.darkkronicle.Konstruct.parser.NodeProcessor;
+import io.github.darkkronicle.Konstruct.type.BooleanObject;
 import io.github.darkkronicle.advancedchatcore.AdvancedChatCore;
 import io.github.darkkronicle.advancedchatmacros.AdvancedChatMacros;
 import io.github.darkkronicle.advancedchatmacros.CommandKeybind;
@@ -23,7 +20,6 @@ import io.github.darkkronicle.advancedchatmacros.functions.CommandFunction;
 import io.github.darkkronicle.advancedchatmacros.functions.CopyFunction;
 import io.github.darkkronicle.advancedchatmacros.functions.InfoFunction;
 import io.github.darkkronicle.advancedchatmacros.functions.SuggestCommandFunction;
-import io.github.darkkronicle.advancedchatmacros.util.TomlUtils;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -80,14 +76,14 @@ public class KeybindManager implements IKeybindProvider, IKeyboardInputHandler, 
         }
         String text = String.join("\n", lines);
         NodeProcessor processor = KonstructFilter.getInstance().getProcessor().copy();
-        processor.addVariable("ready", () -> BooleanFunction.boolToString(!SETTING_UP));
+        processor.addVariable("ready", () -> new BooleanObject(!SETTING_UP));
         processor.addFunction(new CommandFunction());
         processor.addFunction(new CopyFunction());
         processor.addFunction(new InfoFunction());
         processor.addFunction(new SuggestCommandFunction());
         MultipleNodeProcessor multiple;
         try {
-            multiple = MultipleNodeProcessor.fromString(processor, MultipleNodeSettings.DEFAULT, TokenSettings.DEFAULT, text);
+            multiple = MultipleNodeProcessor.fromString(processor, MultipleNodeSettings.DEFAULT, text);
         } catch (NodeException e) {
             AdvancedChatMacros.LOGGER.log(Level.WARN, "Malformed Konstruct in keybinds.knst!", e);
             SETTING_UP = false;
