@@ -9,5 +9,7 @@
   "advancedchatmacros.matchprocessor.command": "Message",
   "advancedchatmacros.matchprocessor.info.command": "What message would be sent in chat. {input} is the original message.\nThis is formatted using Konstruct.\nhttps://darkkronicle.github.io/Konstruct",
   "advancedchatmacros.matchprocessor.delay": "Delay",
-  "advancedchatmacros.matchprocessor.info.delay": "Delay in ticks it takes the message to send."
+  "advancedchatmacros.matchprocessor.info.delay": "Delay in ticks it takes the message to send.",
+  "advancedchatmacros.matchprocessor.parseaskonstruct": "Parse as Pure Konstruct",
+  "advancedchatmacros.matchprocessor.info.parseaskonstruct": "Parses the value as pure Konstruct. Variable 'input' is the chat message.\nWith this off the [[eval]] can still be used\nto parse Konstruct. View macros wiki for more info."
 }
