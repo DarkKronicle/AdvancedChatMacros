@@ -126,7 +126,7 @@ public class MacroMatchProcessor implements IMatchProcessor, IScreenSupplier, IJ
             delay.config.setValueFromJsonElement(obj.get("delay"));
         }
         if (obj.has("parseAsKonstruct")) {
-            delay.config.setValueFromJsonElement(obj.get("parseAsKonstruct"));
+            parseAsKonstruct.config.setValueFromJsonElement(obj.get("parseAsKonstruct"));
         }
         reloadNode();
     }
